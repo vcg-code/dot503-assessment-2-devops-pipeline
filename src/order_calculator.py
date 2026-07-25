@@ -5,7 +5,7 @@ This module is intentionally small because the assessment focuses on
 source control, unit testing and build automation rather than business logic.
 """
 
-PROMOTION_BANNER = "PQS Feature X promotion message"
+PROMOTION_BANNER = "PQS Feature Y seasonal promotion message"
 
 
 def calculate_discount(subtotal: float, discount_rate: float) -> float:
