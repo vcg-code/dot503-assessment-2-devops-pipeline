@@ -1,13 +1,13 @@
 """
-Unit tests for the simple online retail order calculator.
+Unit tests for the PQS online retail order calculator.
 
 Assessment requirement:
-- There must be five test cases.
-- Three test cases must pass.
-- Two test cases must fail.
+- Five test cases in total
+- Three passing test cases
+- Two intentionally failing test cases
 
-The two failing tests are intentionally incorrect to demonstrate how a
-continuous testing stage reports failures inside a CI/testing pipeline.
+The failing assertions demonstrate how a continuous testing stage identifies
+incorrect expectations and reports quality issues before deployment.
 """
 
 import unittest
@@ -21,27 +21,38 @@ from src.order_calculator import (
 
 
 class TestOrderCalculator(unittest.TestCase):
-    """Unit tests for order calculation functions."""
+    """Validate the main order-calculation behaviours."""
+
+    def setUp(self):
+        """Create reusable test data before each test case."""
+        self.discount_subtotal = 200.00
+        self.shipping_subtotal = 120.00
+        self.promotion_subtotal = 150.00
 
     def test_calculate_discount_passes(self):
-        """PASS: 10% discount on 200 should be 20."""
-        self.assertEqual(calculate_discount(200.00, 0.10), 20.00)
+        """PASS: A 10% discount on 200 should equal 20."""
+        result = calculate_discount(self.discount_subtotal, 0.10)
+        self.assertEqual(result, 20.00)
 
-    def test_calculate_shipping_free_threshold_passes(self):
-        """PASS: standard shipping is free for orders of 100 or more."""
-        self.assertEqual(calculate_shipping(120.00), 0.00)
+    def test_free_shipping_threshold_passes(self):
+        """PASS: Standard shipping is free for orders of 100 or more."""
+        result = calculate_shipping(self.shipping_subtotal)
+        self.assertEqual(result, 0.00)
 
-    def test_apply_promotion_code_save20_passes(self):
-        """PASS: SAVE20 should reduce 150 to 120."""
-        self.assertEqual(apply_promotion_code(150.00, "SAVE20"), 120.00)
+    def test_save20_promotion_passes(self):
+        """PASS: SAVE20 should reduce a subtotal of 150 to 120."""
+        result = apply_promotion_code(self.promotion_subtotal, "SAVE20")
+        self.assertEqual(result, 120.00)
 
-    def test_calculate_order_total_fails_intentionally(self):
-        """FAIL: intentionally expects the wrong total for assessment evidence."""
-        self.assertEqual(calculate_order_total(100.00, 0.10, express=False), 95.00)
+    def test_order_total_fails_intentionally(self):
+        """FAIL: The deliberately incorrect expected total is 95."""
+        result = calculate_order_total(100.00, 0.10, express=False)
+        self.assertEqual(result, 95.00)
 
-    def test_shipping_fails_intentionally(self):
-        """FAIL: intentionally expects the wrong standard shipping cost."""
-        self.assertEqual(calculate_shipping(50.00), 5.00)
+    def test_shipping_cost_fails_intentionally(self):
+        """FAIL: The deliberately incorrect expected shipping cost is 5."""
+        result = calculate_shipping(50.00)
+        self.assertEqual(result, 5.00)
 
 
 if __name__ == "__main__":
