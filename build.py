@@ -1,24 +1,12 @@
-"""
-Build automation script for DOT503 Assessment 2.
+"""Repeatable build workflow for DOT503 Assessment 2.
 
-This script performs the required build automation tasks:
-1. Clean previous build outputs.
-2. Compile/check Python source files.
-3. Run unit tests.
-4. Create a deployable package/executable using Python zipapp.
+Running `python build.py` starts from clean output folders, checks the source,
+runs the five unit tests, saves their result and packages the application as a
+Python zipapp. The normal assessment run still creates the package after the
+two required test failures.
 
-Important:
-The assessment requires five unit tests where three pass and two fail.
-Therefore, this script records the failing tests but still creates the package
-by default so the complete build automation workflow can be demonstrated.
-
-Use:
-    python build.py
-
-Optional strict mode:
-    python build.py --strict
-
-Strict mode exits with a failure code when unit tests fail.
+`python build.py --strict` demonstrates how the same workflow would behave in
+a real delivery pipeline, where a failing test stage stops the build.
 """
 
 from __future__ import annotations
@@ -42,7 +30,7 @@ PACKAGE_FILE = DIST_DIR / "pqs_order_calculator.pyz"
 
 
 def clean() -> None:
-    """Remove previous build and distribution outputs."""
+    """Start clean so old artifacts cannot be mistaken for current output."""
     for folder in [BUILD_DIR, DIST_DIR]:
         if folder.exists():
             shutil.rmtree(folder)
@@ -52,12 +40,16 @@ def clean() -> None:
 
 
 def compile_source() -> bool:
-    """Compile Python source files to verify syntax."""
+    """Check every source file for syntax errors before running later stages."""
     return compileall.compile_dir(str(SRC_DIR), force=True, quiet=1)
 
 
 def run_tests() -> int:
-    """Run unit tests and write the test output to build/test-results.txt."""
+    """Run the test suite and keep its output as evidence of the build result.
+
+    The tests run in a separate Python process so the script can capture both
+    passing and failing output in `build/test-results.txt`.
+    """
     command = [sys.executable, "-m", "unittest", "discover", "-s", str(TESTS_DIR)]
 
     completed = subprocess.run(
@@ -75,7 +67,7 @@ def run_tests() -> int:
 
 
 def create_package() -> None:
-    """Create a deployable Python zipapp package."""
+    """Package the checked source as a zipapp that Python can run directly."""
     zipapp.create_archive(
         source=SRC_DIR,
         target=PACKAGE_FILE,
@@ -85,7 +77,7 @@ def create_package() -> None:
 
 
 def main() -> int:
-    """Run the build automation workflow."""
+    """Run each build stage in order and return a useful process exit code."""
     parser = argparse.ArgumentParser(description="DOT503 build automation script.")
     parser.add_argument(
         "--strict",

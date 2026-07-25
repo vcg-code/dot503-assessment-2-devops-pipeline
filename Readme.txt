@@ -1,50 +1,96 @@
-DOT503 Assessment 2 - Continuous Integration and Testing Pipeline
+DOT503 Assessment 2: PQS Order Calculator
 
-Project name:
-PQS Order Calculator
+Overview
+--------
+This project is a small order calculator for the fictional online retailer PQS.
+Its purpose is to demonstrate the practical DevOps tasks required in DOT503:
+working with Git and GitHub branches, running automated unit tests, and using a
+repeatable build script to produce a deployable package.
 
-Description:
-This is a simple Python application for an online retail order calculator. It was created for DOT503 Assessment 2 to demonstrate source control with Git/GitHub, unit testing with unittest, and build automation with a Python build script.
+The application calculates discounts, shipping costs, promotion codes and a
+final order total. The business logic is intentionally straightforward so the
+repository remains focused on the development workflow rather than application
+complexity.
 
-Technology choices:
-- Programming language: Python
-- Unit testing framework: unittest
-- Build automation tool: build.py
-- Deployable package format: Python zipapp (.pyz)
+Repository
+----------
+https://github.com/vcg-code/dot503-assessment-2-devops-pipeline
 
-How to run the application:
-1. Open a terminal in the project root folder.
-2. Run:
+Requirements
+------------
+- Python 3
+- No third-party packages are required
 
-   python -m src
+Project structure
+-----------------
+src/
+    Application code and command-line entry point
+tests/
+    Five unit tests for the order calculations
+build.py
+    Automated build workflow
+Readme.txt
+    Project instructions
 
-How to run the unit tests:
-1. Open a terminal in the project root folder.
-2. Run:
+Running the application
+-----------------------
+Open a terminal in the project root and run:
 
-   python -m unittest discover -s tests
+    python -m src
 
-Important note about tests:
-The assessment requires five test cases where three test cases pass and two test cases fail. For this reason, two tests intentionally contain incorrect expected values.
+This prints one sample order and confirms that the source package can be run
+correctly.
 
-How to run the build script:
-1. Open a terminal in the project root folder.
-2. Run:
+Running the tests
+-----------------
+Run the complete test suite with:
 
-   python build.py
+    python -m unittest discover -s tests -v
 
-The build script performs the following tasks:
-1. Cleans previous build outputs.
-2. Compiles/checks the Python source files.
-3. Runs the unit tests and writes results to build/test-results.txt.
-4. Creates a deployable package at dist/pqs_order_calculator.pyz.
+The assessment requires exactly five tests, with three passing and two failing.
+The two failures are intentional and use incorrect expected values. They are
+included to show how an automated test stage makes unsuccessful checks visible.
+They should not be interpreted as undiscovered defects in the calculator.
 
-How to run the deployable package:
-After running the build script, run:
+Running the build
+-----------------
+Start the automated workflow with:
 
-   python dist/pqs_order_calculator.pyz
+    python build.py
 
-Strict build mode:
-The default build continues even when the two intentionally failing unit tests fail, because those failures are required by the assessment. To stop the build when tests fail, run:
+The script:
 
-   python build.py --strict
+1. Removes output left by an earlier build.
+2. Checks the Python source for syntax errors.
+3. runs all five unit tests and saves the output in
+   build/test-results.txt.
+4. creates the deployable package
+   dist/pqs_order_calculator.pyz.
+
+The default workflow continues to packaging after the two intentional failures
+because the assessment requires both the failing test evidence and a deployable
+artifact.
+
+Running the packaged application
+--------------------------------
+After the build completes, run:
+
+    python dist/pqs_order_calculator.pyz
+
+The output should match the example produced by `python -m src`.
+
+Strict build mode
+-----------------
+A real delivery pipeline would normally stop when tests fail. This behaviour can
+be demonstrated with:
+
+    python build.py --strict
+
+Strict mode records the test output and returns a failure code without creating
+a new package.
+
+Generated files
+---------------
+The build/ and dist/ folders are generated locally and excluded from Git. They
+can always be recreated by running the build script, so keeping them out of the
+repository avoids committing temporary artifacts.

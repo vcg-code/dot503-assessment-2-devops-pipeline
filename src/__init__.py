@@ -1,1 +1,1 @@
-"""Source package for the PQS order calculator application."""
+"""PQS order calculator package used throughout the DOT503 workflow."""

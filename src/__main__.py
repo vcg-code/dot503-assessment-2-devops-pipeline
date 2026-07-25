@@ -1,16 +1,14 @@
-"""
-Command-line entry point for the simple online retail order calculator.
-"""
+"""Command-line example used to verify the PQS order calculator."""
 
 try:
-    # Used when running as a package with: python -m src
+    # Package execution uses the relative import available through `python -m src`.
     from .order_calculator import (
         PROMOTION_BANNER,
         apply_promotion_code,
         calculate_order_total,
     )
 except ImportError:
-    # Used when running the deployable zipapp package.
+    # The zipapp runs this file as its entry point, so it needs a direct import.
     from order_calculator import (
         PROMOTION_BANNER,
         apply_promotion_code,
@@ -19,7 +17,7 @@ except ImportError:
 
 
 def main() -> None:
-    """Run a small demonstration of the application."""
+    """Run one sample order so the source package and zipapp are easy to verify."""
     subtotal = 120.00
     promotion_code = "SAVE10"
 
